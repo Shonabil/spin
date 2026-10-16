@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spin Grup Mahasiswa</title>
+<style>
+  :root {
+    --gold-1: #ffe9a8;
+    --gold-2: #f5c451;
+    --gold-3: #d49a12;
+    --gold-a: #ffd700;
+    --navy-1: #0a1730;
+    --navy-2: #0f3460;
+    --navy-3: #1c4a86;
+    --ink: #0b1c3a;
+    --muted: #5f7192;
+    --line: rgba(11,28,58,.10);
+    --soft: #f3f6fc;
+    --card: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 34px 20px 54px;
+    -webkit-font-smoothing: antialiased;
+    background-color: #ffffff;
+    background-image:
+      radial-gradient(1000px 540px at 50% -12%, rgba(245,196,81,.20), transparent 62%),
+      radial-gradient(820px 460px at 6% -2%, rgba(28,74,134,.10), transparent 60%),
+      radial-gradient(820px 460px at 94% 0%, rgba(28,74,134,.08), transparent 60%),
+      radial-gradient(rgba(15,52,96,.055) 1.1px, transparent 1.2px);
+    background-size: auto, auto, auto, 24px 24px;
+    background-attachment: fixed;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; margin-bottom: 28px; }
+  .hero-emblem {
+    width: 68px; height: 68px;
+    margin: 0 auto 16px;
+    border-radius: 20px;
+    background: linear-gradient(150deg, var(--navy-3), var(--navy-1));
+    border: 2px solid var(--gold-2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 14px 30px rgba(15,52,96,.30), inset 0 0 0 4px rgba(255,215,0,.08);
+  }
+  h1 {
+    font-size: 2.15rem;
+    font-weight: 800;
+    letter-spacing: -.4px;
+    color: var(--navy-2);
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .88rem;
+    font-weight: 600;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .subtitle i {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold-2);
+    box-shadow: 0 0 8px var(--gold-2);
+    display: inline-block;
+  }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(255,255,255,.86);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 14px 34px rgba(15,52,96,.10), inset 0 1px 0 #fff;
+  }
+  .controls input {
+    padding: 11px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(15,52,96,.16);
+    background: var(--soft);
+    color: var(--ink);
+    font-size: .92rem;
+    width: 260px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .controls input::placeholder { color: #93a2bd; }
+  .controls input:focus {
+    background: #fff;
+    border-color: var(--gold-3);
+    box-shadow: 0 0 0 3px rgba(245,196,81,.35);
+  }
+
+  .btn {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: .92rem;
+    letter-spacing: .2px;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .2s, background .2s, border-color .2s;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-2) 45%, var(--gold-3));
+    color: #453100;
+    box-shadow: 0 10px 22px rgba(212,154,18,.38);
+  }
+  .btn-primary:hover { box-shadow: 0 12px 28px rgba(212,154,18,.55); transform: translateY(-1px); }
+  .btn-primary:disabled { background: #d7deea; color: #8a97ad; box-shadow: none; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: #fff;
+    color: var(--navy-2);
+    border: 1px solid rgba(15,52,96,.16);
+    box-shadow: 0 1px 2px rgba(15,52,96,.06);
+  }
+  .btn-secondary:hover {
+    background: var(--soft);
+    border-color: var(--gold-2);
+    transform: translateY(-1px);
+  }
+
+  .layout { display: flex; flex-direction: column; gap: 36px; align-items: flex-start; width: 100%; max-width: 1300px; }
+  .top-row { display: flex; gap: 44px; align-items: flex-start; justify-content: center; flex-wrap: wrap; width: 100%; }
+
+  /* ---------- Wheel ---------- */
+  .wheel-wrap { text-align: center; }
+  .wheel-box {
+    position: relative;
+    z-index: 0;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 10px rgba(255,255,255,.7),
+      0 0 50px rgba(245,196,81,.35),
+      0 26px 60px rgba(15,52,96,.22);
+  }
+  .wheel-box::before {
+    content: "";
+    position: absolute;
+    inset: -46px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,196,81,.30), rgba(28,74,134,.10) 48%, transparent 72%);
+    filter: blur(4px);
+    z-index: -1;
+  }
+  .wheel-box::after {
+    content: "";
+    position: absolute;
+    inset: -13px;
+    border-radius: 50%;
+    border: 2px dashed rgba(212,154,18,.55);
+    animation: spinRing 30s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+  @media (max-width: 900px) { .wheel-box { width: 470px; height: 470px; } }
+  @media (max-width: 560px) { .wheel-box { width: 330px; height: 330px; } }
+  canvas { width: 100%; height: 100%; }
+
+  .pointer {
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    filter: drop-shadow(0 5px 7px rgba(15,52,96,.4));
+    pointer-events: none;
+  }
+  .wheel-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at 34% 26%, #2f6cb0, var(--navy-2) 62%, var(--navy-1));
+    border: 4px solid var(--gold-2);
+    border-radius: 50%;
+    width: 122px; height: 122px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.18rem; letter-spacing: 1.5px; text-align: center;
+    color: var(--gold-1);
+    z-index: 3;
+    cursor: pointer;
+    user-select: none;
+    text-shadow: 0 2px 6px rgba(0,0,0,.45);
+    box-shadow: 0 0 0 6px rgba(255,215,0,.18), 0 12px 26px rgba(15,52,96,.45), inset 0 2px 6px rgba(255,255,255,.18);
+    transition: transform .15s, box-shadow .25s;
+  }
+  .wheel-center:hover {
+    box-shadow: 0 0 0 12px rgba(255,215,0,.26), 0 12px 30px rgba(15,52,96,.5), inset 0 2px 6px rgba(255,255,255,.18);
+  }
+  .wheel-center:active { transform: translate(-50%, -50%) scale(.94); }
+  .wheel-center.pulse { animation: ctrPulse 1.8s ease-in-out infinite; }
+  @keyframes ctrPulse {
+    0%, 100% { box-shadow: 0 0 0 6px rgba(255,215,0,.18), 0 12px 26px rgba(15,52,96,.45), inset 0 2px 6px rgba(255,255,255,.18); }
+    50% { box-shadow: 0 0 0 18px rgba(255,215,0,.07), 0 12px 26px rgba(15,52,96,.45), inset 0 2px 6px rgba(255,255,255,.18); }
+  }
+
+  .result {
+    margin-top: 22px;
+    font-size: 1.1rem;
+    min-height: 34px;
+    font-weight: 700;
+    color: var(--navy-2);
+  }
+  .result:not(:empty) {
+    display: inline-block;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: rgba(245,196,81,.16);
+    border: 1px solid rgba(212,154,18,.4);
+    animation: pop .3s ease;
+  }
+
+  /* ---------- Team panel ---------- */
+  .team-panel {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 16px 14px;
+    min-width: 296px;
+    max-height: 566px;
+    overflow-y: auto;
+    box-shadow: 0 16px 40px rgba(15,52,96,.12);
+  }
+  .team-panel::-webkit-scrollbar { width: 8px; }
+  .team-panel::-webkit-scrollbar-thumb { background: rgba(15,52,96,.18); border-radius: 10px; }
+  .panel-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 28px; height: 28px;
+    border: none; border-radius: 50%;
+    background: var(--soft);
+    color: var(--gold-3);
+    font-size: .9rem; font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .panel-close:hover { background: var(--gold-2); color: var(--navy-1); }
+  .team-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    padding-right: 30px;
+    color: var(--navy-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: .2px;
+  }
+  .team-panel h3 .badge {
+    font-size: .72rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    color: #453100;
+    padding: 3px 12px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(212,154,18,.3);
+  }
+  .team-row { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+  .team-row .tnum {
+    width: 23px; height: 23px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    color: #453100;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .66rem; font-weight: 800;
+  }
+  .team-row input {
+    flex: 1;
+    padding: 7px 11px;
+    border: 1px solid rgba(15,52,96,.14);
+    border-radius: 9px;
+    background: var(--soft);
+    color: var(--ink);
+    font-size: .8rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .team-row input:focus {
+    background: #fff;
+    border-color: var(--gold-3);
+    box-shadow: 0 0 0 3px rgba(245,196,81,.28);
+  }
+  .team-row .del {
+    flex-shrink: 0;
+    width: 27px; height: 27px;
+    border: none; border-radius: 50%;
+    background: var(--soft);
+    color: var(--gold-3);
+    cursor: pointer;
+    font-size: .85rem; font-weight: 700;
+    transition: background .2s, color .2s;
+  }
+  .team-row .del:hover { background: var(--gold-2); color: var(--navy-1); }
+
+  /* ---------- Groups ---------- */
+  .groups {
+    display: flex;
+    flex-direction: row;
+    gap: 26px;
+    min-width: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .group {
+    position: relative;
+    overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 22px 22px 16px;
+    min-height: 124px;
+    min-width: 320px;
+    flex: 1 1 350px;
+    max-width: 500px;
+    box-shadow: 0 18px 42px rgba(15,52,96,.12);
+  }
+  .group::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent), rgba(255,255,255,0));
+  }
+  .group::after {
+    content: "";
+    position: absolute;
+    top: -70px; right: -70px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent), transparent 68%);
+    opacity: .10;
+    pointer-events: none;
+  }
+  .group h3 {
+    font-size: 1.32rem;
+    margin-bottom: 16px;
+    color: var(--navy-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: .2px;
+  }
+  .group h3 .gtitle { display: flex; align-items: center; gap: 11px; }
+  .group h3 .dot {
+    width: 13px; height: 13px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.9), 0 0 12px var(--accent);
+  }
+  .group h3 .badge {
+    font-size: .75rem;
+    font-weight: 800;
+    background: #fff;
+    border: 1.5px solid var(--accent);
+    padding: 3px 13px;
+    border-radius: 20px;
+    color: var(--navy-2);
+  }
+  .group ul { list-style: none; }
+  .group li {
+    padding: 9px 14px;
+    margin: 7px 0;
+    background: linear-gradient(180deg, #ffffff, var(--soft));
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 11px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 3px rgba(15,52,96,.06);
+    animation: pop .32s ease;
+  }
+  .group li span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(15,52,96,.06);
+    color: var(--accent);
+    font-weight: 800;
+    font-size: .72rem;
+  }
+  .group li.empty {
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 500;
+    font-size: .9rem;
+    border: 1px dashed rgba(15,52,96,.18);
+    border-left: 1px dashed rgba(15,52,96,.18);
+    background: transparent;
+    box-shadow: none;
+  }
+  @keyframes pop { from { transform: scale(.9) translateY(4px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+  .note {
+    margin-top: 6px;
+    font-size: .84rem;
+    color: var(--muted);
+    text-align: center;
+    width: 100%;
+  }
+  .note b { color: var(--gold-3); }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,23,48,.42);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+  }
+  .modal-overlay.show { opacity: 1; visibility: visible; }
+  .modal {
+    position: relative;
+    background: #fff;
+    border: 3px solid var(--gold-2);
+    border-radius: 26px;
+    padding: 46px 54px 42px;
+    text-align: center;
+    max-width: 580px;
+    width: 92%;
+    box-shadow: 0 34px 80px rgba(15,52,96,.4), 0 0 70px rgba(245,196,81,.3);
+    transform: scale(.85);
+    transition: transform .25s ease;
+  }
+  .modal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: radial-gradient(600px 200px at 50% 0%, rgba(245,196,81,.16), transparent 70%);
+    pointer-events: none;
+  }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal .emoji { font-size: 42px; margin-bottom: 8px; }
+  .modal .badge {
+    display: inline-block;
+    font-size: .95rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    color: #453100;
+    padding: 7px 24px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(212,154,18,.32);
+  }
+  .modal h2 {
+    font-size: 2.4rem;
+    margin-bottom: 10px;
+    color: var(--navy-2);
+    word-break: break-word;
+    letter-spacing: -.5px;
+  }
+  .modal p { font-size: 1.2rem; margin-bottom: 28px; color: var(--muted); }
+  .modal .btn { font-size: 1.05rem; padding: 13px 40px; }
+</style>
+</head>
+<body>
+  <div class="controls">
+    <input id="teamInput" placeholder="Tambah tim lalu tekan Enter (mis. Tim 1)" />
+    <button class="btn btn-secondary" id="addBtn">+ Tambah Tim</button>
+    <button class="btn btn-secondary" id="resetBtn">&#8635; Reset Semua</button>
+    <button class="btn btn-secondary" id="openPanelBtn" title="Tampilkan/sembunyikan daftar tim">&#9776; Daftar Tim</button>
+  </div>
+
+  <div class="layout">
+    <div class="top-row" id="topRow">
+      <div class="wheel-wrap">
+        <div class="wheel-box">
+          <svg class="pointer" width="72" height="62" viewBox="0 0 72 62">
+            <defs>
+              <linearGradient id="ptrGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffe9a8"/>
+                <stop offset="55%" stop-color="#f5c451"/>
+                <stop offset="100%" stop-color="#d49a12"/>
+              </linearGradient>
+            </defs>
+            <polygon points="0,31 64,6 64,56" fill="url(#ptrGrad)" stroke="#b8860b" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          <canvas id="wheel" width="1100" height="1100"></canvas>
+          <div class="wheel-center pulse">SPIN!</div>
+        </div>
+        <div class="result" id="result"></div>
+      </div>
+
+      <div class="team-panel" id="teamPanel">
+        <button class="panel-close" id="panelClose" title="Tutup">&#10005;</button>
+        <h3>Daftar Tim <span class="badge" id="teamCount">0</span></h3>
+        <div id="teamList"></div>
+      </div>
+
+      <div class="groups" id="groups"></div>
+    </div>
+    <p class="note">Pasangan <b>A / B</b> dari lembaga yang sama otomatis dipisah ke grup berbeda.</p>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <span class="badge" id="modalGroupBadge">Grup A</span>
+      <h2 id="modalTitle">-</h2>
+      <p id="modalDesc">Tim ini telah masuk ke grup.</p>
+      <button class="btn btn-primary" id="modalCloseBtn">Lanjut</button>
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+const result = document.getElementById('result');
+const spinBtn = document.querySelector('.wheel-center');
+const modalOverlay = document.getElementById('modalOverlay');
+const modalGroupBadge = document.getElementById('modalGroupBadge');
+const modalTitle = document.getElementById('modalTitle');
+const modalDesc = document.getElementById('modalDesc');
+
+const MAX_TEAMS = 16;
+const TEAMS_PER_GROUP = 8;
+const GROUP_LABELS = ['A', 'B'];
+const GROUP_COLORS = ['#e0a800', '#3b7fc4'];
+const GROUP_TEXT = ['#0a1730', '#ffffff'];
+
+let teams = [];
+let groups = GROUP_LABELS.map(() => []);
+let nextPref = 0; // grup giliran berikutnya (selang-seling: A, B, A, B, ...)
+let currentRotation = 0;
+let spinning = false;
+
+// Palet roda: biru tua dan kuning saja.
+const palette = ['#0f3460','#ffd700','#14477d','#ffe066','#0b2a52','#f2c14e'];
+
+function textColorFor(hex) {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.substr(0, 2), 16) / 255;
+  const g = parseInt(c.substr(2, 2), 16) / 255;
+  const b = parseInt(c.substr(4, 2), 16) / 255;
+  const f = v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const lum = 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  return lum > 0.5 ? '#0a1730' : '#ffffff';
+}
+
+function teamName(i) { return teams[i]; }
+
+function drawWheel() {
+  const n = teams.length;
+  const cx = canvas.width / 2, cy = canvas.height / 2, r = canvas.width / 2 - 14;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (n === 0) {
+    ctx.fillStyle = 'rgba(15,52,96,.05)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(212,154,18,.55)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#5f7192';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Belum ada tim', cx, cy);
+    return;
+  }
+
+  const slice = (Math.PI * 2) / n;
+  let fontSize = 44;
+  if (n > 6) fontSize = 36;
+  if (n > 10) fontSize = 30;
+  if (n > 14) fontSize = 26;
+
+  // outer ring (navy + gold)
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
+  ctx.strokeStyle = '#0f3460';
+  ctx.lineWidth = 12;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(245,196,81,.9)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(currentRotation);
+
+  for (let i = 0; i < n; i++) {
+    const start = i * slice;
+    const end = start + slice;
+    const fill = palette[i % palette.length];
+
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.55)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.rotate(start + slice / 2);
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = textColorFor(fill);
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.shadowColor = 'rgba(0,0,0,.28)';
+    ctx.shadowBlur = 3;
+    ctx.fillText(teamName(i), r - 26, 0);
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // inner hub (glossy)
+  const hub = ctx.createRadialGradient(cx - 22, cy - 24, 8, cx, cy, 86);
+  hub.addColorStop(0, '#2f6cb0');
+  hub.addColorStop(0.6, '#0f3460');
+  hub.addColorStop(1, '#0a1730');
+  ctx.beginPath();
+  ctx.arc(cx, cy, 78, 0, Math.PI * 2);
+  ctx.fillStyle = hub;
+  ctx.fill();
+  ctx.strokeStyle = '#f5c451';
+  ctx.lineWidth = 7;
+  ctx.stroke();
+}
+
+function buildGroupsUI() {
+  const container = document.getElementById('groups');
+  container.innerHTML = '';
+  groups.forEach((g, i) => {
+    const div = document.createElement('div');
+    div.className = 'group';
+    div.style.setProperty('--accent', GROUP_COLORS[i % GROUP_COLORS.length]);
+    div.innerHTML = `
+      <h3>
+        <span class="gtitle"><span class="dot"></span>Grup ${GROUP_LABELS[i]}</span>
+        <span class="badge" data-count="${i}">0/${TEAMS_PER_GROUP}</span>
+      </h3>
+      <ul data-group="${i}"></ul>`;
+    container.appendChild(div);
+  });
+}
+
+function renderTeamList() {
+  const list = document.getElementById('teamList');
+  document.getElementById('teamCount').textContent = `${teams.length} / ${MAX_TEAMS}`;
+  list.innerHTML = teams.map((t, i) => `
+    <div class="team-row">
+      <span class="tnum">${i + 1}</span>
+      <input type="text" value="${t.replace(/"/g, '&quot;')}" data-index="${i}" />
+      <button class="del" data-del="${i}" title="Hapus">&#10005;</button>
+    </div>`).join('');
+
+  list.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const i = parseInt(inp.dataset.index, 10);
+      if (teams[i] !== undefined) teams[i] = inp.value;
+      drawWheel();
+    });
+  });
+  list.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.dataset.del, 10);
+      if (teams[i] === undefined) return;
+      teams.splice(i, 1);
+      updateGroups();
+    });
+  });
+}
+
+function updateGroups() {
+  groups.forEach((g, i) => {
+    const ul = document.querySelector(`[data-group="${i}"]`);
+    if (g.length) {
+      ul.innerHTML = g.map((t, j) => `<li><span>${j + 1}</span> ${t}</li>`).join('');
+    } else {
+      ul.innerHTML = `<li class="empty">Belum ada tim di grup ini</li>`;
+    }
+    const badge = document.querySelector(`[data-count="${i}"]`);
+    if (badge) badge.textContent = `${g.length}/${TEAMS_PER_GROUP}`;
+  });
+  if (teams.length === 0) {
+    spinBtn.textContent = 'SELESAI';
+    spinBtn.classList.remove('pulse');
+  } else {
+    spinBtn.textContent = 'SPIN!';
+    spinBtn.classList.add('pulse');
+  }
+  renderTeamList();
+  drawWheel();
+}
+
+const SIBLING_SETS = [
+  ['unibaa', 'unibab'],
+  ['poltekbaa', 'poltekbab'],
+  ['muliaa', 'muliab'],
+  ['ukmitka', 'ukmitkb'],
+  ['sttmigasa', 'sttmigasb'],
+];
+
+function norm(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function isSibling(name, other) {
+  const a = norm(name), b = norm(other);
+  return SIBLING_SETS.some(set => set.includes(a) && set.includes(b));
+}
+
+function isOpen(i) { return groups[i].length < TEAMS_PER_GROUP; }
+
+function fits(i, name) {
+  return isOpen(i) && !groups[i].some(t => isSibling(name, t));
+}
+
+function addToGroup(name) {
+  // Utamakan grup giliran agar pengisian selang-seling (A, B, A, B, ...),
+  // lalu coba grup lainnya bila giliran tsb diblokir aturan kakak/adik.
+  const order = [nextPref];
+  for (let i = 0; i < groups.length; i++) if (i !== nextPref) order.push(i);
+
+  for (const g of order) {
+    if (fits(g, name)) {
+      groups[g].push(name);
+      nextPref = (g + 1) % groups.length;
+      return g;
+    }
+  }
+
+  // Tidak ada slot longgar: kakak/adik menutup satu-satunya grup terbuka.
+  // Pindahkan kakak/adiknya ke grup penuh dengan menukar satu tim.
+  for (let g = 0; g < groups.length; g++) {
+    if (!isOpen(g)) continue;
+    const sIdx = groups[g].findIndex(t => isSibling(t, name));
+    if (sIdx === -1) continue;
+    const sib = groups[g][sIdx];
+    for (let h = 0; h < groups.length; h++) {
+      if (h === g) continue;
+      for (let x = 0; x < groups[h].length; x++) {
+        const cand = groups[h][x];
+        if (isSibling(cand, name)) continue;
+        if (groups[g].some((t, i) => i !== sIdx && isSibling(cand, t))) continue;
+        if (groups[h].some((t, i) => i !== x && isSibling(sib, t))) continue;
+        groups[h][x] = sib;
+        groups[g].splice(sIdx, 1);
+        groups[g].push(name, cand);
+        nextPref = (g + 1) % groups.length;
+        return g;
+      }
+    }
+  }
+
+  let best = 0;
+  for (let i = 1; i < groups.length; i++) {
+    if (groups[i].length < groups[best].length) best = i;
+  }
+  groups[best].push(name);
+  nextPref = (best + 1) % groups.length;
+  return best;
+}
+
+function showWinner(name, gIdx) {
+  modalGroupBadge.textContent = `Grup ${GROUP_LABELS[gIdx]}`;
+  modalGroupBadge.style.background = GROUP_COLORS[gIdx];
+  modalGroupBadge.style.color = GROUP_TEXT[gIdx];
+  modalTitle.textContent = name;
+  modalDesc.textContent = `Masuk ke Grup ${GROUP_LABELS[gIdx]}.`;
+  modalOverlay.classList.add('show');
+}
+
+function closeModal() {
+  modalOverlay.classList.remove('show');
+}
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', e => {
+  if (e.target === modalOverlay) closeModal();
+});
+
+function pickWinner() {
+  if (teams.length === 0 || spinning) return;
+  spinning = true;
+  result.textContent = '';
+
+  const n = teams.length;
+  const slice = (Math.PI * 2) / n;
+  const targetIndex = Math.floor(Math.random() * n);
+  const targetTheta = targetIndex * slice + slice / 2;
+  const spins = 5 + Math.floor(Math.random() * 5);
+  let offset = (-targetTheta - currentRotation) % (Math.PI * 2);
+  if (offset < 0) offset += Math.PI * 2;
+  const targetAngle = currentRotation + spins * Math.PI * 2 + offset;
+
+  const duration = 4000 + Math.random() * 1000;
+  const start = performance.now();
+  const startRotation = currentRotation;
+
+  function animate(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 4);
+    currentRotation = startRotation + (targetAngle - startRotation) * eased;
+    drawWheel();
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      currentRotation = targetAngle;
+      drawWheel();
+      const winner = teams.splice(targetIndex, 1)[0];
+      const gIdx = addToGroup(winner);
+      result.textContent = `${winner} terpilih!`;
+      spinning = false;
+      updateGroups();
+      showWinner(winner, gIdx);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// --- Tambah / hapus tim ---
+const teamInput = document.getElementById('teamInput');
+function addTeam() {
+  const v = teamInput.value.trim();
+  if (!v) return;
+  if (teams.length >= MAX_TEAMS) { result.textContent = `Maksimal ${MAX_TEAMS} tim!`; return; }
+  teams.push(v);
+  teamInput.value = '';
+  updateGroups();
+}
+document.getElementById('addBtn').addEventListener('click', addTeam);
+teamInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); addTeam(); }
+});
+
+const DEFAULT_TEAMS = [
+  'Uniba A', 'Uniba B', 'Poltekba A', 'Poltekba B',
+  'Mulia A', 'Mulia B', 'PIP Bpp', 'STAI Balikpapan',
+  'UKM ITK A', 'stt migas A', 'stt migas B', 'STIE Balikpapan',
+  'Teknik Logistic ITK', 'Sistem Informasi ITK', 'HMJ RE Poltekba', 'UKM ITK B'
+];
+
+function resetAll() {
+  teams = [];
+  groups = GROUP_LABELS.map(() => []);
+  nextPref = 0;
+  currentRotation = 0;
+  spinning = false;
+  result.textContent = '';
+  closeModal();
+  teams.push(...DEFAULT_TEAMS.slice(0, MAX_TEAMS));
+  updateGroups();
+}
+document.getElementById('resetBtn').addEventListener('click', resetAll);
+spinBtn.addEventListener('click', pickWinner);
+
+// init with teams
+buildGroupsUI();
+teams.push(...DEFAULT_TEAMS.slice(0, MAX_TEAMS));
+updateGroups();
+
+const teamPanel = document.getElementById('teamPanel');
+const topRow = document.getElementById('topRow');
+function setPanel(open) {
+  teamPanel.style.display = open ? '' : 'none';
+  topRow.classList.toggle('panel-closed', !open);
+}
+document.getElementById('panelClose').addEventListener('click', () => {
+  setPanel(false);
+});
+document.getElementById('openPanelBtn').addEventListener('click', () => {
+  setPanel(teamPanel.style.display === 'none');
+});
+</script>
+</body>
+</html>
